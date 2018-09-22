@@ -253,7 +253,7 @@ fun onNewProfile(profile: Profile?) {
 
 Phương thức này dùng để thêm profile nhận được từ UI Thread vao ProfileAdapter. Sau khi thêm thành công vào trong adapter, tự động trượt (scroll) tới vị trí cuối cùng của danh sách. Kết quả cuối cùng sẽ như sau:
 
-![final_demo](assets/final_demo.gif)
+![final_demo](assets/final_demo_resize.gif)
 
 Cảm ơn các bạn đã quan tâm bài viết của chúng tôi. Hi bài viết này sẽ mang lại cho các bạn những kiến thức hữu ích. Chúng tôi cũng luôn muốn lắng nghe những ý kiến đóng góp và chia sẻ của các bạn để có thễ cải thiện những điểm thiếu xót và hạn chế để có thể viết những bài khác tốt hơn. Mọi ý kiến đóng góp các bạn có thể gởi về email tech@tegify.com.
 
