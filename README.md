@@ -1,13 +1,10 @@
-
-# Threading với HandlerThread trong Android
-
-Sau bài viết này, bạn sẽ học được cách sử dụng HandlerThread để nhận message từ Runnable trong một Activity và giao tiếp với UI Handler để cập nhật dữ liệu lên giao diện (UI).
+Sau bài viết này, bạn sẽ học được cách sử dụng **HandlerThread** để nhận **thông điệp (message)** từ **Runnable** trong một Activity và giao tiếp với UI Handler để cập nhật dữ liệu lên giao diện (UI).
 
 Sự phản hồi nhanh chóng là một trong những tính năng quan trọng nhất của bất kì ứng dụng nào. Điều này lại càng đặc biệt quan trọng hơn đối với những thiết bị giới hạn về tài nguyên (resource-constrainted devices) như là điện thoại thông minh (smartphones). Ứng dụng phải phản hồi nhanh chóng, mượt mà đối với những tương tác của người dùng để mang lại những trải nghiệm tốt nhất. Cũng vì lý do đó, **lập trình đồng thời (concurrent programming)** trở thành một trong những kỹ năng không thể thiếu đối với bất kỳ lập trình viên nào.
 
-Đối với mọi lập trình viên Android, điều đầu tiên quan trọng nhất cần phải biết đó là tất cả những tương tác của người dùng (user) trên giao diện ứng dụng (User Interface or UI) được thực thi trên cùng một thread được gọi là **main thread** hoặc **UI thread**. Trong thực tế, trên nhiều nền tảng như Swing, AWT, iOS, v.v. cách tiếp cận tốt nhất là chuyển đổi những hoạt động (operation) cần thực hiện trên UI thread thành những thông điệp (message) đến một bộ tiêu thụ (consumer) duy nhất trên UI thread. Trong android, một trong những cách để thực hiện điều này là dùng **HandlerThread**.
+Đối với mọi lập trình viên Android, điều đầu tiên quan trọng nhất cần phải biết đó là tất cả những tương tác của người dùng (user) trên giao diện ứng dụng (User Interface or UI) được thực thi trên cùng một thread được gọi là **main thread** hoặc **UI thread**. Trong thực tế, trên nhiều nền tảng như Swing, AWT, iOS, v.v. cách tiếp cận tốt nhất là chuyển đổi những hoạt động (operation) hoặc tác vụ (task) cần thực hiện trên UI thread thành những thông điệp (Message) đến một bộ tiêu thụ (Consumer) duy nhất trên UI thread. Trong Android, một trong những cách để thực hiện điều này là dùng **HandlerThread**.
 
-Trong bài viết này, bạn sẽ phát triển một ứng dụng nhỏ tên food-ordering cần dùng kỹ thuật lập trình đồng thờic (concurrent programming) để thực thi một số tác vụ. McWenderlich là một ứng dụng cập nhật nhanh chóng ứng food-ordering cho một khách sạn, nó sẽ xử lý những đơn hàng bằng cách chuyển đổi giá từ đô la Mỹ (USD) sang ru-pi (INR) của Ấn Độ. Sau bài này, bạn sẽ học được
+Trong bài viết này, bạn sẽ phát triển một ứng dụng nhỏ tên **HandlerThreadDemo** cần dùng kỹ thuật lập trình đồng thờic (concurrent programming) để thực thi một số tác vụ. **HandlerThreadDemo** là một ứng dụng mẫu dùng để hiển thị danh sách profile được phát sinh ngẫu nhiên từ một thread ngầm (Backgroung Thread). Sau bài này, bạn sẽ học được:
 - Một số thành phần (components) của Android Framework: **Handler**, **Message**, **Runnable**, **Looper** và **MessageQueue**.
 - Vai trò của **HandlerThread** trong framework.
 - Hiện thực một **HandlerThread** để cập nhật giao diện (UI).
@@ -191,7 +188,7 @@ Mở **MainActivity** từ package **com.tegify.handlerthreaddemo** và khai bá
 Sau đó, khai báo các phương thức để khởi tạo các thuộc tính này:
 
 ```kotlin
- private fun initBackgroundThread() {
+     private fun initBackgroundThread() {
         uiHander = UIHandler()
         uiHander.attach(this)
 
@@ -255,5 +252,19 @@ Phương thức này dùng để thêm profile nhận được từ UI Thread va
 
 ![final_demo](assets/final_demo_resize.gif)
 
-Cảm ơn các bạn đã quan tâm bài viết của chúng tôi. Hi bài viết này sẽ mang lại cho các bạn những kiến thức hữu ích. Chúng tôi cũng luôn muốn lắng nghe những ý kiến đóng góp và chia sẻ của các bạn để có thễ cải thiện những điểm thiếu xót và hạn chế để có thể viết những bài khác tốt hơn. Mọi ý kiến đóng góp các bạn có thể gởi về email tech@tegify.com.
+## Các trường hợp có thể sử dụng HandlerThread
+**HandlerThread** có thể dùng được cho rất nhiều tác vụ trong việc lập trình Android:
+- Thích hợp cho các trường hợp cần hiện thực cơ chế Sản Xuât/Tiêu Thụ (Consumer/Producer).
+- Đơn giãn hoá việc tạo đối tượng **Looper** và liên kết (bound) nó với một thread cụ thể.
+- Dùng để hiện thực trong **Service** giúp đẩy việc xử lý, thực thi một số task vụ khỏi Thread.
 
+## So sánh HandlerThread với AsyncTask, Service và IntentService
+Để giúp các bạn khỏi bối rối khi quyết phải sử dụng **HandlerThread**, **AsyncTask**, **Service** và **IntentService**, chúng tôi sẽ so sánh HandlerThread với các cơ chế còn lại để các bạn có thể hiểu rõ hơn:
+- **AsyncTask**: là một sự đơn giãn hoá việc sử dụng các thành phần Handler, HandlerThread, Message, MessageQueue, Runnable. Nó được xem như một tác vụ đơn giãn đã gói lại (wrap) những cơ chế hiện thực phức tạp dùng các thành phần trên. **AsyncTask** giúp đơn giãn việc thực thi một tác vụ dưới background thread và đẩy kết quả ngược lại UI thread để hiển thị lên màn hình.
+- **Service**: **Activity** là nơi mà chỉ nên thực hiện một số tác vụ ngầm, ngắn hạn bởi vì nó sẽ bị ẩn, hiện do tương tác, điều hướng của người dùng. Khi activity không còn hiển thị trên màn hình, nó có khả năng bị hệ thống (system) huỷ (kill) để lấy lại tài nguyên (resources) như RAM, CPU, v.v. để cho các ứng dụng khác có độ ưu tiên cao hơn dùng. Do vậy, những tác vụ cần được thực hiện lâu hơn và để đảm bảo không phụ thuộc vào vòng đời của Activity thì nó nên được hiện thực bên trong **Service**. 
+- **IntentService**: là một hiện thực (Implementation) của **Service** có tạo sẵn một **HandlerThread** bên trong nó để thực thi tác vụ tuần tự. **IntentService** thường phù hợp với các trường hợp bạn cần thực thi một tác vụ ngầm nào đó và không quan tâm nhiều đến kết quả (fire-and-forget).
+
+>Ghi chú:
+Bạn cần biết một điều quan trọng là **IntentService** sử dụng một **HandlerThread** bên trong nó và có thể xem mã nguồn của nó [ở đây](https://android.googlesource.com/platform/frameworks/base/+/b33729565421c892f2da95f548abdd50b6fad0f6/core/java/android/app/IntentService.java).
+
+Cảm ơn các bạn đã quan tâm bài viết của chúng tôi. Hi bài viết này sẽ mang lại cho các bạn những kiến thức hữu ích. Chúng tôi cũng luôn muốn lắng nghe những ý kiến đóng góp và chia sẻ của các bạn để có thễ cải thiện những điểm thiếu xót và hạn chế để có thể viết những bài khác tốt hơn. Mọi ý kiến đóng góp các bạn có thể gởi về email tech@tegify.com.
